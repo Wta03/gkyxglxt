@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qust.task.mapper.CompanyMapper">
+    <!--查询所有的医药公司信息,name不为空则模糊查询-->
+    <select id="getAllCompany" resultType="com.qust.task.domain.DrugCompany">
+        select * from drugcompany
+        <if test="name != null and name != ''">
+            <where>
+                <bind name="companyName" value="'%' + name + '%'"/>
+                company_name LIKE #{companyName}
+            </where>
+        </if>
+    </select>
+
+    <!--根据id查找一个医药公司信息-->
+    <select id="getCompanyById" resultType="com.qust.task.domain.DrugCompany">
+        select *
+        from drugcompany
+        where company_id = #{id}
+        limit 1
+    </select>
+
+    <!--添加一个医药公司信息-->
+    <insert id="saveCompany" parameterType="com.qust.task.entity.DrugCompanyEntity">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="total">
+            select COUNT(*) from drugcompany
+        </selectKey>
+        insert into drugcompany(company_name,company_phone,updatetime,createtime)
+        values (#{companyName},#{companyPhone},#{updatetime},#{createtime})
+    </insert>
+
+    <!--根据id删除医药公司信息-->
+    <delete id="deleteCompanyById">
+        delete
+        from drugcompany
+        where company_id = #{id}
+    </delete>
+    <!--根据id更新医药公司信息-->
+    <update id="updateCompanyById">
+        update drugcompany
+        set company_name=#{companyName},
+            company_phone=#{companyPhone},
+            updatetime=#{updatetime}
+        where company_id = #{companyId}
+    </update>
+
+</mapper>
